@@ -8,7 +8,7 @@ steps:
 - task: Gradle@2
   inputs:
     gradleWrapperFile: 'gradlew'
-    tasks: 'clean assembleDebug test --stacktrace'
+    tasks: 'clean assembleDebug test --stacktrace --info --warning-mode all'
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
     javaHomeOption: 'JDKVersion'
