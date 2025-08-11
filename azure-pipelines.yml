@@ -1,29 +1,31 @@
+trigger:
+- main
+
 pool:
   vmImage: 'macOS-latest'
 
 steps:
 - task: Gradle@2
   inputs:
-    workingDirectory: ''
     gradleWrapperFile: 'gradlew'
-    gradleOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '17'  # <-- Upgrade Java to 17
-    jdkArchitectureOption: 'x64'
+    tasks: 'clean assembleDebug test --stacktrace'
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
-    tasks: 'assembleDebug test --stacktrace'  
-  displayName: Run assembleDebug and test
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '11'  # AGP 7.3.2 requires JDK 11
+    jdkArchitectureOption: 'x64'
+    gradleOptions: '-Xmx3072m'
+  displayName: 'Build and Test App'
 
 - task: CopyFiles@2
   inputs:
     contents: '**/*.apk'
-    targetFolder: '$(build.artifactStagingDirectory)'
-  displayName: Copy .apk files to artifact staging directory
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+  displayName: 'Copy APK files to staging'
 
 - task: PublishBuildArtifacts@1
   inputs:
-    pathToPublish: '$(build.artifactStagingDirectory)'
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: 'drop'
     artifactType: 'container'
-  displayName: Publish artifacts
+  displayName: 'Publish APK Artifact'
